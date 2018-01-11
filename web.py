@@ -56,7 +56,7 @@ def listBlock():
 @node.route('/blocks', methods=['GET'])
 def get_blocks():
     chain_to_send = blockchain
-    blocklist = ""
+    blocks = []
     # Convert our blocks into dictionaries
     # so we can send them as json objects later
     for block in chain_to_send:
@@ -70,16 +70,13 @@ def get_blocks():
             "data": block_data,
             "hash": block_hash
         }
-        assembled = json.dumps(block)
-        if blocklist == "":
-            blocklist = assembled
-        else:
-            blocklist += ","+assembled
-
-    # Send our chain to whomever requested it
-    # chain_to_send = json.dumps(chain_to_send)
-    # return chain_to_send
-    return blocklist
+        blocks.append(block)
+    response = node.response_class(
+        response=json.dumps(blocks),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 def proof_of_work(last_proof):
     # Create a variable that we will use to find
