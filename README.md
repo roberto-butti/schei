@@ -17,13 +17,15 @@ To clone and execute the sources you can:
 - execute the internal Web Server as Flask Application
 
 
-    git clone https://github.com/roberto-butti/schei
-    cd schei
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-    export FLASK_DEBUG=1; FLASK_APP=web.py flask run
-    
+```
+git clone https://github.com/roberto-butti/schei
+cd schei
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+export FLASK_DEBUG=1; FLASK_APP=web.py flask run
+```
+
     
     
     
