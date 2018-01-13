@@ -24,6 +24,23 @@ class Block:
         self.nonce = nonce
 
 
+    def getJson(self):
+        block_index = str(self.index)
+        block_timestamp = str(self.timestamp)
+        block_data = str(self.data)
+        block_previous_hash = self.previous_hash
+        block_hash = self.hash
+        block_nonce = self.nonce
+        block = {
+            "index": block_index,
+            "timestamp": block_timestamp,
+            "data": block_data,
+            "previous_hash": block_previous_hash,
+            "hash": block_hash,
+            "nonce" : block_nonce.hex
+        }
+        return block
+
     def hash_block(self):
         sha = hasher.sha256()
         # sha.update(str(self.index).encode('utf-8'))
