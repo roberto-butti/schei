@@ -60,19 +60,11 @@ def get_blocks():
     # Convert our blocks into dictionaries
     # so we can send them as json objects later
     for block in chain_to_send:
-        block_index = str(block.index)
-        block_timestamp = str(block.timestamp)
-        block_data = str(block.data)
-        block_hash = block.hash
-        block = {
-            "index": block_index,
-            "timestamp": block_timestamp,
-            "data": block_data,
-            "hash": block_hash
-        }
-        blocks.append(block)
+        json_block = block.getJson()
+        blocks.append(json_block)
+
     response = node.response_class(
-        response=json.dumps(blocks),
+        response=json.dumps(blocks, indent=4),
         status=200,
         mimetype='application/json'
     )
