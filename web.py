@@ -20,6 +20,9 @@ this_nodes_transactions = []
 # A completely random address of the owner of this node
 miner_address = "q3nf394hjg-random-miner-address-34nf3i4nflkn3oi"
 # This node's blockchain copy
+
+# @todo set blockchain as global http://flask.pocoo.org/docs/0.12/api/#flask.g
+
 blockchain = []
 blockchain.append(Block.create_genesis_block())
 
