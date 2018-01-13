@@ -3,6 +3,10 @@ from flask import request
 from block import Block
 import datetime as date
 import json
+from collections import Counter
+from flask import render_template
+import pickle
+
 
 
 node = Flask(__name__)
@@ -50,8 +54,26 @@ def transaction():
 
 
 @node.route('/', methods=['GET'])
-def listBlock():
-    return "List Transaction\n"
+def index():
+    n = Counter(blockchain)
+    return render_template('index.html', n=n)
+    #return "Blockchain size: " + str(n) + "\n"
+
+@node.route('/save', methods=['GET'])
+def persist():
+    output = open('blockchain.pkl', 'wb')
+    pickle.dump(blockchain, output)
+    output.close()
+    return "ok"
+
+
+@node.route('/load', methods=['GET'])
+def loadblockchain():
+    pkl_file = open('blockchain.pkl', 'rb')
+    blockchain = pickle.load(pkl_file)
+    pkl_file.close()
+    return blockchain
+
 
 @node.route('/blocks', methods=['GET'])
 def get_blocks():
