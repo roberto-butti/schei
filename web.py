@@ -6,6 +6,8 @@ import json
 from collections import Counter
 from flask import render_template
 import pickle
+from flask import g
+
 
 
 
@@ -21,10 +23,25 @@ this_nodes_transactions = []
 miner_address = "q3nf394hjg-random-miner-address-34nf3i4nflkn3oi"
 # This node's blockchain copy
 
-# @todo set blockchain as global http://flask.pocoo.org/docs/0.12/api/#flask.g
 
-blockchain = []
-blockchain.append(Block.create_genesis_block())
+
+# blockchain = []
+# blockchain.append(Block.create_genesis_block())
+
+def get_blockchain():
+    blockchain = getattr(g, '_blockchain', None)
+    if blockchain is None:
+        g._blockchain = []
+        g._blockchain.append(Block.create_genesis_block())
+        #g._blockchain = blockchain
+        print(g._blockchain)
+    else:
+        print("blockchain NOT NONE")
+    return g._blockchain
+
+def set_blockchain(blockchain):
+    g._blockchain = blockchain
+
 
 # Store the url data of every
 # other node in the network
@@ -58,13 +75,14 @@ def transaction():
 
 @node.route('/', methods=['GET'])
 def index():
+    blockchain = get_blockchain()
     n = Counter(blockchain)
     return render_template('index.html', n=n)
-    #return "Blockchain size: " + str(n) + "\n"
 
 @node.route('/save', methods=['GET'])
 def persist():
     output = open('blockchain.pkl', 'wb')
+    blockchain = get_blockchain()
     pickle.dump(blockchain, output)
     output.close()
     return "ok"
@@ -74,13 +92,14 @@ def persist():
 def loadblockchain():
     pkl_file = open('blockchain.pkl', 'rb')
     blockchain = pickle.load(pkl_file)
+    set_blockchain(blockchain)
     pkl_file.close()
     return blockchain
 
 
 @node.route('/blocks', methods=['GET'])
 def get_blocks():
-    chain_to_send = blockchain
+    chain_to_send = get_blockchain()
     blocks = []
     # Convert our blocks into dictionaries
     # so we can send them as json objects later
@@ -113,6 +132,7 @@ def proof_of_work(last_proof):
 @node.route('/mine', methods = ['GET'])
 def mine():
     # Get the last proof of work
+    blockchain = get_blockchain()
     last_block = blockchain[len(blockchain) - 1]
     last_proof = last_block.data['proof-of-work']
     # Find the proof of work for
@@ -146,6 +166,7 @@ def mine():
         last_block_hash
     )
     blockchain.append(mined_block)
+    set_blockchain(blockchain)
     # Let the client know we mined a block
     return json.dumps({
         "index": new_block_index,
